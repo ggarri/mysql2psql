@@ -28,7 +28,7 @@ This tool provides you the chance of migrate your local MySQL databases to Postg
     
 ## Set it up for yourself 
 #### Step1: Set up db config
-Set up your database configuration on "./config/parameters.json"
+Set up your database configuration on `./config/parameters.json`
 * `mysql`: Mysql connection values
 * `psql`: Postgres connection values
 * `threads`: In case of 'all-databases', you can define the number of threads to run in parallel (Max. number of CPUs). Non parallel 0
