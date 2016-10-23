@@ -1,0 +1,37 @@
+{
+    "column": {
+        "type": [
+            {"from": "datetime", "to": "timestamp"},
+            {"from": "tinyint", "to": "smallint",
+                "_IF_": [
+                    {"attr": "fullType", "val": "tinyint(1)", "to": "boolean"}
+                ]
+            },
+            {"from": "smallint", "to": "smallint",
+                "_IF_": [
+                    {"attr": "fullType", "val": "smallint(1)", "to": "boolean"}
+                ]
+            },
+            {"from": "int", "to": "int",
+                "_IF_": [
+                    {"attr": "fullType", "val": "int(1)", "to": "boolean"}
+                ]
+            },
+            {"from": "mediumint", "to": "int"},
+            {"from": "mediumtext", "to": "text"},
+            {"from": "longtext", "to": "text"},
+            {"from": "longblob", "to": "bytea"},
+            {"from": "blob", "to": "bytea"},
+            {"from": "double", "to": "decimal"},
+            {"from": "enum", "to": "set"}
+        ],
+        "default": [
+            {"from": "CURRENT_TIMESTAMP", "to": "current_timestamp"}
+        ]
+    },
+    "table": {
+        "engine": [
+            {"from": "MyISAM", "to": "INNODB"}
+        ]
+    }
+}

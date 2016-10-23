@@ -1,0 +1,19 @@
+{
+    "mysql": {
+        "host": "127.0.0.1",
+        "port": 3306,
+        "user": "root",
+        "password": "root",
+        "charset": "utf8",
+        "use_unicode": false
+    },
+    "psql": {
+        "host": "127.0.0.1",
+        "port": 5432,
+        "user": "root",
+        "password": "root"
+    },
+    "threads": 0,
+    "prefix": false,
+    "v1_schema_name" : false
+}

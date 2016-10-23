@@ -1,0 +1,16 @@
+{
+    "column": {
+        "type": [
+            {"value": "boolean", "method": "convertStrBoolean"},
+            {"value": "bytea", "method": "makeItEmpty"},
+            {"value": "TIME", "method": "makeItTime"}
+        ],
+        "fullType": [
+          {"value": "datetime", "method": "notNullableDatetime"},
+          {"value": "date", "method": "notNullableDate"}
+        ],
+        "reference": [
+            {"value": "notNone", "method": "refToNullable"}
+        ]
+    }
+}

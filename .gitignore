@@ -1,0 +1,6 @@
+tools/cleaner/output/*
+output/*
+vendor/*
+config/parameters.json
+logs/*
+*.pyc
