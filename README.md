@@ -7,13 +7,13 @@ This tool provides you the chance of migrate your local MySQL databases to Postg
 
 # How to use it
  
-## Mode1: Migrate a single database
+### Mode1: Migrate a single database
     $ python main.py {db_name}
     
-## Mode2: Migrate few tables from a single database
+### Mode2: Migrate few tables from a single database
     $ python main.py {db_name} [{table_name1} {table_name2} ..]
 
-## Mode3: Migrate your whole MySQL schema (for that I would recommend to use `prefix` from parameters.json, read more above)
+### Mode3: Migrate your whole MySQL schema (for that I would recommend to use `prefix` from parameters.json, read more above)
     $ python main.py all-databases
  
 
@@ -27,7 +27,7 @@ This tool provides you the chance of migrate your local MySQL databases to Postg
     sudo bash ./bin/install_requirements.sh
     
 ## Set it up for yourself 
-### Step1: Set up db config
+#### Step1: Set up db config
 Set up your database configuration on "./config/parameters.json"
 * `mysql`: Mysql connection values
 * `psql`: Postgres connection values
@@ -35,18 +35,18 @@ Set up your database configuration on "./config/parameters.json"
 * `prefix`: In case of 'all-databases', it filters every database which prefix is the defined here. Otherwise use false
 * `v1_schema_name`: If you want to migrate old schema onto a separated postgres schema, its name is defined here. Otherwise use false
 
-### Step2: Version schema names
+#### Step2: Version schema names
 Set up your schema names for version1 and version2 on "./config/parameters.json"
 
-### Step2: Define model rules you want to modified
+#### Step3: Define model rules you want to modified
 * Open `./rules/schema_changes.json`
 * Define your own schema rules on it. These rules are going to be used to redefine the new db structure, in case of not including any rules to a table or column, they will be migrated as it is in Mysql 
 
-### Step3: Define Postgresql conversion rules from Mysql ones
+#### Step4: Define Postgresql conversion rules from Mysql ones
 * Open `./rules/mysql_to_psql.json`
 * Define MySQL keys to Postgres, most of rules were already defined by default, but there might be some more missing
 
-### Step4: Define data convertion 
+#### Step5: Define data convertion 
 * Open `./rules/mysql_raw_dump.json`
 * Define data conversion according to its type, YOU might prefer to define different data conversion depending of your own model. Functions for conversion are defined in `dumperAuxFuncs.py`, feel free to add your own customized ones.
 
