@@ -13,9 +13,9 @@ This tool provides you the chance of migrate your local MySQL databases to Postg
 ### Mode2: Migrate few tables from a single database
     $ python main.py {db_name} [{table_name1} {table_name2} ..]
 
-### Mode3: Migrate your whole MySQL schema (for that I would recommend to use `prefix` from parameters.json, read more above)
+### Mode3: Migrate your whole MySQL schema
     $ python main.py all-databases
- 
+(it is recommended to use `prefix` from parameters.json, read more above)
 
 # Documentation
 ## OS Dependences
