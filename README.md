@@ -72,5 +72,5 @@ These are the files generated during the migration process:
 #### Create views
     psql -h server -d database_name -U username < ./output/psql_views.sql
 
-## Mode2: Single command
+### Mode2: Single command
     $ bash ./bin/migrate.sh [-p {port}] -U {username} -d {database} -Wf {password}
