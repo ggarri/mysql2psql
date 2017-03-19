@@ -66,11 +66,11 @@ These are the files generated during the migration process:
 ## Manual migration
 ### Mode1: Manually
 #### Create tables
-    psql -h server -d database_name -U username < ./output/psql_tables.sql
+    psql -h server -d database_name -U username < ./output/{databaase}/psql_tables.sql
 #### Insert data
-    psql -h server -d database_name -U username < ./output/psql_data.sql
-#### Create views
-    psql -h server -d database_name -U username < ./output/psql_views.sql
+    psql -h server -d database_name -U username < ./output/{databaase}/psql_data.sql
+#### Create views ( Just in case you want to keep views with previous squema)
+    psql -h server -d database_name -U username < ./output/{databaase}/psql_views.sql
 
 ### Mode2: Single command
     $ bash ./bin/migrate.sh [-p {port}] -U {username} -d {database} -Wf {password}
