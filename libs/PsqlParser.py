@@ -4,6 +4,7 @@ import os
 import re
 import json
 import time
+import copy
 from RuleHandler import RuleHandler
 from MysqlParser import MysqlParser
 import dumperAuxFuncs
@@ -442,12 +443,29 @@ class PsqlParser():
         columns_ref = {}
         columns_pri = {}
         columns_ignore = {}
+        first_pk_col = None
 
         for col_name, col_attrs in tableColumns.iteritems():
             if RuleHandler.STR_SKIP in col_attrs:
                 columns_ignore[col_name] = col_attrs
             elif col_attrs['isPk']:
-                columns_pri[col_name] = col_attrs
+                if first_pk_col is None:
+                    first_pk_col = col_name
+                    columns_pri[first_pk_col] = col_attrs
+                else:
+                    col_attrs['isPk'] = False
+                    columns[col_name] = col_attrs
+
+                    if first_pk_col in columns_pri:
+                        columns_pri[first_pk_col]['isPk'] = False
+                        columns[first_pk_col] = columns_pri[first_pk_col]
+                        del columns_pri[first_pk_col]
+
+                    if 'pkC' not in columns_pri:
+                        columns_pri['pkC'] = copy.copy(col_attrs)
+                        columns_pri['pkC']['isPkC'] = list([first_pk_col])
+
+                    columns_pri['pkC']['isPkC'].append(col_name)
             elif col_attrs['reference']:
                 columns_ref[col_name] = col_attrs
             else:
@@ -486,6 +504,9 @@ class PsqlParser():
                 col_def_sql += ' DEFAULT ' + column_attr['default'].upper()
             else:
                 col_def_sql += " DEFAULT U&'%s'" % column_attr['default']
+
+        if 'isPkC' in column_attr:
+            col_def_sql = 'PRIMARY KEY (' + ','.join(column_attr['isPkC']) + ')'
 
         return col_def_sql
 

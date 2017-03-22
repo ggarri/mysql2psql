@@ -1,37 +1,4 @@
 {
     "tables": {
-        "table_name_1": {
-            "_PRE_SQL_": [
-                "SELECT 'Optional query to run before exporting this table data'"
-            ],
-            "name": "new_table_name",
-            "columns": {
-                "column_name": {
-                    "name": "new_column_name"
-                },
-                "ref_column_name": {
-                    "name": "new_ref_column_name",
-                    "reference": "table_to_ref_to (col_ref_to)"
-                },
-                "column_with_new_properties": {
-                    "type": "boolean",
-                    "nullable": true
-                }
-            }
-        },
-        "table_name_2": {
-            "_PRE_SQL_": [
-                "SELECT 'Optional query to run before exporting this table data'"
-            ],
-            "name": "new_table_name_2",
-            "columns": {
-                "column_to_skip": "_SKIP_",
-                "column_ref_with_cascade": {
-                    "reference": "reservation (id)",
-                    "nullable": false,
-                    "on_delete": "CASCADE"
-                }
-            }
-        }
     }
 }
