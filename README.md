@@ -69,6 +69,8 @@ These are the files generated during the migration process:
     psql -h server -d database_name -U username < ./output/{databaase}/psql_tables.sql
 #### Insert data
     psql -h server -d database_name -U username < ./output/{databaase}/psql_data.sql
+#### Insert indexes and fks
+    psql -h server -d database_name -U username < ./output/{databaase}/psql_index_fk.sql
 #### Create views ( Just in case you want to keep views with previous squema)
     psql -h server -d database_name -U username < ./output/{databaase}/psql_views.sql
 
