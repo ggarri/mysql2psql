@@ -500,6 +500,10 @@ class PsqlParser():
                     col_def_sql += ' DEFAULT ' + column_attr['default']
             elif column_attr['default'] == 'current_timestamp':
                 col_def_sql += ' DEFAULT ' + column_attr['default']
+            elif column_attr['default'] == '0::bit':
+                col_def_sql += ' DEFAULT 0::bit'
+            elif column_attr['default'] == '1::bit':
+                col_def_sql += ' DEFAULT 1::bit'
             elif column_attr['default'].lower() == "true" or column_attr['default'].lower() == "false":
                 col_def_sql += ' DEFAULT ' + column_attr['default'].upper()
             else:

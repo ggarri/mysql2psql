@@ -27,7 +27,9 @@
             {"from": "enum", "to": "set"}
         ],
         "default": [
-            {"from": "CURRENT_TIMESTAMP", "to": "current_timestamp"}
+            {"from": "CURRENT_TIMESTAMP", "to": "current_timestamp"},
+            {"from": "b'0'", "to": "0::bit"},
+            {"from": "b'1'", "to": "1::bit"}
         ]
     },
     "table": {
