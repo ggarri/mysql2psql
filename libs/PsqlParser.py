@@ -389,7 +389,7 @@ class PsqlParser():
         :return: SQL statement for creating
         """
         default_on_def = 'RESTRICT DEFERRABLE INITIALLY IMMEDIATE'
-        fkey_template = 'ALTER TABLE "%s" ADD CONSTRAINT %s_%s_fkey FOREIGN KEY (%s) REFERENCES %s ON DELETE %s;'
+        fkey_template = 'ALTER TABLE "%s" ADD CONSTRAINT %s_%s_fkey FOREIGN KEY ("%s") REFERENCES %s ON DELETE %s;'
         # index_template = 'CREATE INDEX %s_%s_idx ON %s (%s);'
         fkeys = ''
 
