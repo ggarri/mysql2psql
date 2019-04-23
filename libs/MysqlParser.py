@@ -124,7 +124,7 @@ class MysqlParser():
 
         # Generate SELECT SQL to export raw data
         sql, res = '', None
-        alias = 't'; sql = "SELECT t.`%s` FROM %s.%s as %s" % ('`, t.`'.join(cols), db_name, table, alias)
+        alias = 't'; sql = "SELECT t.`%s` FROM `%s`.%s as %s" % ('`, t.`'.join(cols), db_name, table, alias)
         if '_JOIN_' in table_attrs:
             if not isinstance(table_attrs, list): table_attrs['_JOIN_'] = [table_attrs['_JOIN_']]
             for idx, join_attrs in enumerate(table_attrs['_JOIN_']):
