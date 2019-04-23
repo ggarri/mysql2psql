@@ -18,6 +18,7 @@
                 ]
             },
             {"from": "mediumint", "to": "int"},
+            {"from": "tinytext", "to": "text"},
             {"from": "mediumtext", "to": "text"},
             {"from": "longtext", "to": "text"},
             {"from": "longblob", "to": "bytea"},
