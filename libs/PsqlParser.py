@@ -506,7 +506,7 @@ class PsqlParser():
                 col_def_sql += " DEFAULT U&'%s'" % column_attr['default']
 
         if 'isPkC' in column_attr:
-            col_def_sql = 'PRIMARY KEY (' + ','.join(column_attr['isPkC']) + ')'
+            col_def_sql = 'PRIMARY KEY ("' + '","'.join(column_attr['isPkC']) + '")'
 
         return col_def_sql
 
