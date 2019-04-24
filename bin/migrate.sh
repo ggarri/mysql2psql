@@ -15,7 +15,11 @@ PORT=5432
 HOST="127.0.0.1"
 for ((i=1;i<=$#;i++));
 do
-    if [ ${!i} = "-p" ]
+    if [ ${!i} = "-h" ]
+    then ((i++))
+        HOST=${!i};
+
+    elif [ ${!i} = "-p" ]
     then ((i++))
         PORT=${!i};
 
