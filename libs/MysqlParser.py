@@ -279,6 +279,8 @@ class MysqlParser():
         SELECT TABLE_SCHEMA as db_name
         FROM """+self.information_schema+""".tables
         WHERE TABLE_SCHEMA <> 'mysql'
+	AND TABLE_SCHEMA <> 'sys'
+	AND TABLE_SCHEMA <> 'performance_schema'
         AND TABLE_SCHEMA <> 'information_schema'"""
 
         if prefix and len(prefix)>0:
