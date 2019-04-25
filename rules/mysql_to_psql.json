@@ -34,7 +34,7 @@
     },
     "table": {
         "name": [
-            {"from": "users", "to": "blp_users"}
+            {"from": "user", "to": "blp_user"}
 	],
         "engine": [
             {"from": "MyISAM", "to": "INNODB"}
