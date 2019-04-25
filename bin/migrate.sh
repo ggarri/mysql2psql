@@ -77,7 +77,7 @@ psql --set ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -f ${SQL} -o ${ERRL
 echo "Done ($SECONDS)"
 
 SECONDS=0
-cat -v ./output/blpcore/psql_index_fk.sql | sed 's/REFERENCES user/REFERENCES "user"/g' > ./output/blpcore/psql_index_fk.sql.new
+cat -v ./output/blpcore/psql_index_fk.sql | sed 's/REFERENCES user/REFERENCES "blp_user"/g' > ./output/blpcore/psql_index_fk.sql.new
 mv ./output/blpcore/psql_index_fk.sql.new ./output/blpcore/psql_index_fk.sql
 SQL="./output/${DB_NAME}/psql_index_fk.sql"
 echo -en "${YELLOW}Creating indexes and fk${NC}..."
