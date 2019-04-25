@@ -24,16 +24,18 @@
             {"from": "longblob", "to": "bytea"},
             {"from": "blob", "to": "bytea"},
             {"from": "double", "to": "decimal"},
-            {"from": "enum", "to": "set"},
-            {"from": "bit", "to": "boolean"}
+            {"from": "enum", "to": "set"}
         ],
         "default": [
             {"from": "CURRENT_TIMESTAMP", "to": "current_timestamp"},
-            {"from": "b'0'", "to": "FALSE"},
-            {"from": "b'1'", "to": "TRUE"}
+            {"from": "b'0'", "to": "0::bit"},
+            {"from": "b'1'", "to": "1::bit"}
         ]
     },
     "table": {
+        "name": [
+            {"from": "users", "to": "blp_users"}
+	],
         "engine": [
             {"from": "MyISAM", "to": "INNODB"}
         ]
