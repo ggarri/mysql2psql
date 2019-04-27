@@ -3,6 +3,7 @@
 __author__ = 'ggarrido'
 
 import subprocess
+import csv
 from collections import OrderedDict
 import pymysql.cursors
 from pymysql.converters import decoders, through
@@ -133,7 +134,33 @@ class MysqlParser():
         if '_WHERE_' in table_attrs:
             sql += ' WHERE ' + table_attrs['_WHERE_']
 
-        if len(sql) > 0: self.cursor.execute(sql); res = self.cursor.fetchall()
+        if len(sql) > 0:
+
+            with_header=False
+            delimiter='|'
+            quotechar="'"
+#            quoting=csv.QUOTE_NONNUMERIC
+            quoting=csv.QUOTE_NONE
+            escapechar='\\'
+            con_sscursor=True
+            self.cursor.execute(sql)
+            cabecera= [campo[0] for campo in self.cursor.description]
+            ofile = open(table_temp_filename,'wb')
+            csv_writer = csv.writer(ofile, delimiter=delimiter, quotechar=quotechar,quoting=quoting,escapechar=escapechar)
+            if with_header:
+                csv_writer.writerow(cabecera)
+            if con_sscursor:
+                 while True:
+                    x = self.cursor.fetchone()
+                    if x:
+                        csv_writer.writerow(x)
+                    else:
+                        break
+            else:
+                for x in self.cursor.fetchall():
+                    csv_writer.writerow(x)
+            ofile.close()
+
         return res
 
     def _get_db_tables_schema(self, db_name, tables=[]):
