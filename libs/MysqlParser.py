@@ -28,7 +28,7 @@ class MysqlParser():
 
         conn_params['conv'] = custom_decoders
         self.connection = pymysql.connect(**conn_params)
-        self.cursor = self.connection.cursor()
+        self.cursor = self.connection.cursor(pymysql.cursors.SSCursor)
         self.skip_pre_sql = False
         if information_schema is not None: self.information_schema = information_schema
 
@@ -102,7 +102,7 @@ class MysqlParser():
             except Exception, e: print RED + ("ERROR: %s\n MSG: %s" % (pre_sql, str(e))) + NC
 
 
-    def get_table_raw_data(self, db_name, table, cols, table_attrs, schema_changes):
+    def get_table_raw_data(self, db_name, table, cols, table_attrs, schema_changes, table_temp_filename):
         """
         Return raw data from passed table cols, applying conversion rules
         :param table:
