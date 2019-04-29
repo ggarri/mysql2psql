@@ -25,7 +25,8 @@
             {"from": "blob", "to": "bytea"},
             {"from": "double", "to": "decimal"},
             {"from": "enum", "to": "set"},
-            {"from": "bit", "to": "boolean"}
+            {"from": "bit", "to": "boolean"},
+            {"from": "json", "to": "jsonb"}
         ],
         "default": [
             {"from": "CURRENT_TIMESTAMP", "to": "current_timestamp"},
