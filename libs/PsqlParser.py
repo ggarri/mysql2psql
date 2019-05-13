@@ -134,8 +134,8 @@ class PsqlParser():
             rows = mysql_parser.get_table_raw_data(db_name, table_name, cols_from, table_attrs, schema_changes, table_temp_filename)
             table_raw_rules = self._get_table_raw_dump_rules(table_name, cols_from, table_attrs['columns'])
             sql_copy_data_template = ','.join(['%s' for x in range(0, len(cols_to))]) + '\n'
-            columns = '", "'.join(cols_to)
-            psql_dump.write("\copy \"%s\" (\"%s\") FROM '%s' WITH (FORMAT CSV, QUOTE '''', DELIMITER ',', NULL 'NULL');\n"
+            columns = ', '.join(cols_to)
+            psql_dump.write("\copy \"%s\" (%s) FROM '%s' WITH (FORMAT CSV, QUOTE '''', DELIMITER ',', NULL 'NULL');\n"
                 % (table_name_to, columns, table_filename))
 
             try:
