@@ -18,18 +18,26 @@
                 ]
             },
             {"from": "mediumint", "to": "int"},
+            {"from": "tinytext", "to": "text"},
             {"from": "mediumtext", "to": "text"},
             {"from": "longtext", "to": "text"},
             {"from": "longblob", "to": "bytea"},
             {"from": "blob", "to": "bytea"},
             {"from": "double", "to": "decimal"},
-            {"from": "enum", "to": "set"}
+            {"from": "enum", "to": "set"},
+            {"from": "bit", "to": "boolean"},
+            {"from": "json", "to": "jsonb"}
         ],
         "default": [
-            {"from": "CURRENT_TIMESTAMP", "to": "current_timestamp"}
+            {"from": "CURRENT_TIMESTAMP", "to": "current_timestamp"},
+            {"from": "b'0'", "to": "FALSE"},
+            {"from": "b'1'", "to": "TRUE"}
         ]
     },
     "table": {
+        "name": [
+            {"from": "user", "to": "blp_user"}
+	],
         "engine": [
             {"from": "MyISAM", "to": "INNODB"}
         ]

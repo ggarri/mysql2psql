@@ -133,7 +133,7 @@ def migrate_db(params, psql_conn_params, database, tables=[], skip_pre_sql=False
         migrate(config, psql_conn_params, database, tables, skip_pre_sql, log_file)
         timeS = time.time()
         print "Running ./bin/migrate.sh .....logs in " + log_file_path
-        subprocess.check_call(['bash', path+'/bin/migrate.sh', '-d', database, '-Wf', config['psql']['password'], '-p',
+        subprocess.check_call(['bash', path+'/bin/migrate.sh', '-h', config['psql']['host'], '-d', database, '-Wf', config['psql']['password'], '-p',
                                str(config['psql']['port']), '-U', config['psql']['user']]
                               , stderr=log_file, stdout=log_file)
         print time.time() - timeS

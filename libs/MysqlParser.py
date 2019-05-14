@@ -3,6 +3,7 @@
 __author__ = 'ggarrido'
 
 import subprocess
+import csv
 from collections import OrderedDict
 import pymysql.cursors
 from pymysql.converters import decoders, through
@@ -27,7 +28,7 @@ class MysqlParser():
 
         conn_params['conv'] = custom_decoders
         self.connection = pymysql.connect(**conn_params)
-        self.cursor = self.connection.cursor()
+        self.cursor = self.connection.cursor(pymysql.cursors.SSCursor)
         self.skip_pre_sql = False
         if information_schema is not None: self.information_schema = information_schema
 
@@ -101,7 +102,7 @@ class MysqlParser():
             except Exception, e: print RED + ("ERROR: %s\n MSG: %s" % (pre_sql, str(e))) + NC
 
 
-    def get_table_raw_data(self, db_name, table, cols, table_attrs, schema_changes):
+    def get_table_raw_data(self, db_name, table, cols, table_attrs, schema_changes, table_temp_filename):
         """
         Return raw data from passed table cols, applying conversion rules
         :param table:
@@ -124,7 +125,7 @@ class MysqlParser():
 
         # Generate SELECT SQL to export raw data
         sql, res = '', None
-        alias = 't'; sql = "SELECT t.`%s` FROM %s.%s as %s" % ('`, t.`'.join(cols), db_name, table, alias)
+        alias = 't'; sql = "SELECT t.`%s` FROM `%s`.%s as %s" % ('`, t.`'.join(cols), db_name, table, alias)
         if '_JOIN_' in table_attrs:
             if not isinstance(table_attrs, list): table_attrs['_JOIN_'] = [table_attrs['_JOIN_']]
             for idx, join_attrs in enumerate(table_attrs['_JOIN_']):
@@ -133,7 +134,33 @@ class MysqlParser():
         if '_WHERE_' in table_attrs:
             sql += ' WHERE ' + table_attrs['_WHERE_']
 
-        if len(sql) > 0: self.cursor.execute(sql); res = self.cursor.fetchall()
+        if len(sql) > 0:
+
+            with_header=False
+            delimiter='|'
+            quotechar="'"
+#            quoting=csv.QUOTE_NONNUMERIC
+            quoting=csv.QUOTE_NONE
+            escapechar='\\'
+            con_sscursor=True
+            self.cursor.execute(sql)
+            cabecera= [campo[0] for campo in self.cursor.description]
+            ofile = open(table_temp_filename,'wb')
+            csv_writer = csv.writer(ofile, delimiter=delimiter, quotechar=quotechar,quoting=quoting,escapechar=escapechar)
+            if with_header:
+                csv_writer.writerow(cabecera)
+            if con_sscursor:
+                 while True:
+                    x = self.cursor.fetchone()
+                    if x:
+                        csv_writer.writerow(x)
+                    else:
+                        break
+            else:
+                for x in self.cursor.fetchall():
+                    csv_writer.writerow(x)
+            ofile.close()
+
         return res
 
     def _get_db_tables_schema(self, db_name, tables=[]):
@@ -279,6 +306,8 @@ class MysqlParser():
         SELECT TABLE_SCHEMA as db_name
         FROM """+self.information_schema+""".tables
         WHERE TABLE_SCHEMA <> 'mysql'
+	AND TABLE_SCHEMA <> 'sys'
+	AND TABLE_SCHEMA <> 'performance_schema'
         AND TABLE_SCHEMA <> 'information_schema'"""
 
         if prefix and len(prefix)>0:

@@ -5,6 +5,7 @@ import re
 import json
 import time
 import copy
+import pandas
 from RuleHandler import RuleHandler
 from MysqlParser import MysqlParser
 import dumperAuxFuncs
@@ -120,6 +121,7 @@ class PsqlParser():
             print "Parsing table '%s' data...." % table_name
             table_name_to = table_attrs if not table_attrs.get('name', {}) else table_attrs['name']
             table_filename = os.path.join(tables_path, "%s.sql" % (table_name_to))
+            table_temp_filename = os.path.join(tables_path, "%s.temp.sql" % (table_name_to))
             table_dump = open(table_filename, 'w+')
 
             cols_from = [col_name for col_name, col_attr in table_attrs['columns'].iteritems()
@@ -129,20 +131,30 @@ class PsqlParser():
                  if not col_attr.get('_SKIP_', False)]
 
             start_time = time.time()
-            rows = mysql_parser.get_table_raw_data(db_name, table_name, cols_from, table_attrs, schema_changes)
+            rows = mysql_parser.get_table_raw_data(db_name, table_name, cols_from, table_attrs, schema_changes, table_temp_filename)
             table_raw_rules = self._get_table_raw_dump_rules(table_name, cols_from, table_attrs['columns'])
             sql_copy_data_template = ','.join(['%s' for x in range(0, len(cols_to))]) + '\n'
-            columns = '", "'.join(cols_to)
-            psql_dump.write("\copy \"%s\" (\"%s\") FROM '%s' WITH (FORMAT CSV, QUOTE '''', DELIMITER ',', NULL 'NULL');\n"
+            columns = ', '.join(cols_to)
+            psql_dump.write("\copy \"%s\" (%s) FROM '%s' WITH (FORMAT CSV, QUOTE '''', DELIMITER ',', NULL 'NULL');\n"
                 % (table_name_to, columns, table_filename))
 
-            for row_data in rows:
+            try:
+              df = pandas.read_csv(table_temp_filename, delimiter='|', quotechar="'", na_filter=False, header=None, escapechar='\\')
+            except pandas.io.common.EmptyDataError:
+              print(table_temp_filename, " is empty and has been skipped.")
+            else:
+              tuples = [tuple(x) for x in df.values]
+              for row_data in tuples:
+#                print(row_data)
                 row_data = list(row_data)
+#                print(row_data)
                 self._apply_raw_dump_rules(row_data, table_raw_rules)
+#                print(row_data)
                 csv_row_data = sql_copy_data_template % tuple(map(self._supaFilta, row_data))
                 table_dump.write(csv_row_data)
 
-            table_dump.close()
+              table_dump.close()
+
         psql_dump.close()
 
     def generate_psql_index_fk(self, schema, output_file):
@@ -373,6 +385,7 @@ class PsqlParser():
 
     @staticmethod
     def _supaFilta( v):
+        if v is '': return 'NULL'
         if v is None: return 'NULL'
         if v is True: return 'true'
         if v is False: return 'false'
@@ -389,7 +402,7 @@ class PsqlParser():
         :return: SQL statement for creating
         """
         default_on_def = 'RESTRICT DEFERRABLE INITIALLY IMMEDIATE'
-        fkey_template = 'ALTER TABLE "%s" ADD CONSTRAINT %s_%s_fkey FOREIGN KEY (%s) REFERENCES %s ON DELETE %s;'
+        fkey_template = 'ALTER TABLE "%s" ADD CONSTRAINT %s_%s_fkey FOREIGN KEY ("%s") REFERENCES %s ON DELETE %s;'
         # index_template = 'CREATE INDEX %s_%s_idx ON %s (%s);'
         fkeys = ''
 
@@ -500,13 +513,17 @@ class PsqlParser():
                     col_def_sql += ' DEFAULT ' + column_attr['default']
             elif column_attr['default'] == 'current_timestamp':
                 col_def_sql += ' DEFAULT ' + column_attr['default']
+            elif column_attr['default'] == '0::bit':
+                col_def_sql += ' DEFAULT 0::bit'
+            elif column_attr['default'] == '1::bit':
+                col_def_sql += ' DEFAULT 1::bit'
             elif column_attr['default'].lower() == "true" or column_attr['default'].lower() == "false":
                 col_def_sql += ' DEFAULT ' + column_attr['default'].upper()
             else:
                 col_def_sql += " DEFAULT U&'%s'" % column_attr['default']
 
         if 'isPkC' in column_attr:
-            col_def_sql = 'PRIMARY KEY (' + ','.join(column_attr['isPkC']) + ')'
+            col_def_sql = 'PRIMARY KEY ("' + '","'.join(column_attr['isPkC']) + '")'
 
         return col_def_sql
 
