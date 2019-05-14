@@ -1,4 +1,22 @@
 {
     "tables": {
+        "reservation_reminder": {
+            "_PRE_SQL_": [
+                "DELETE IGNORE FROM reservation_reminder WHERE resa_id NOT IN (SELECT id FROM reservation)"
+            ],
+            "name": "reminder",
+            "columns": {
+                "resa_id": {
+                    "name": "reservation_id",
+                    "reference": "reservation (id)"
+                },
+                "user_id": {
+                    "nullable": true
+                },
+                "client_id": {
+                    "reference": "client (id)"
+                }
+            }
+        },
     }
 }
