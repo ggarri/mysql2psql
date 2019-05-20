@@ -13,6 +13,11 @@ function error {
 
 PORT=5432
 HOST="127.0.0.1"
+SKIP_DB=true
+SKIP_SCHEMA=true
+SKIP_DATA=true
+SKIP_VIEWS=true
+SKIP_CONSTRAINTS=true
 for ((i=1;i<=$#;i++));
 do
     if [ ${!i} = "-h" ]
@@ -53,49 +58,58 @@ echo -e "${YELLOW}************************${NC}"
 # touch ${DUMPLOG}
 # echo -e "${YELLOW}Logs are being redirect to:${NC} \n\tQueries:\t${DUMPLOG}\n\tErrors:\t\t${ERRLOG}${NC}"
 
-echo -en "${YELLOW}Creating db${NC}..."
-psql --set ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -o ${ERRLOG} -d postgres -c "DROP DATABASE IF EXISTS \"${DB_NAME}\"" || error "Dropping old db"
-psql --set ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -o ${ERRLOG} -d postgres -c "CREATE DATABASE \"${DB_NAME}\"" || error "Creating db"
+if [ ${SKIP_DB} = "false" ]
+then
+  echo -en "${YELLOW}Creating db${NC}..."
+  psql --set ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -o ${ERRLOG} -d postgres -c "DROP DATABASE IF EXISTS \"${DB_NAME}\"" || error "Dropping old db"
+  psql --set ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -o ${ERRLOG} -d postgres -c "CREATE DATABASE \"${DB_NAME}\"" || error "Creating db"
+else
+  echo -en "${YELLOW}Skip creating db${NC}..."
+fi
 echo "Done ($SECONDS)"
 
 SECONDS=0
 SQL="./output/${DB_NAME}/psql_tables.sql"
-echo -en "${YELLOW}Creating v2 tables${NC}..."
-psql --set ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -f ${SQL} -o ${ERRLOG} -d ${DB_NAME} || error "Creating tables"
+if [ ${SKIP_SCHEMA} = "false" ]
+then
+  echo -en "${YELLOW}Creating v2 tables${NC}..."
+  psql --set ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -f ${SQL} -o ${ERRLOG} -d ${DB_NAME} || error "Creating tables"
+else
+  echo -en "${YELLOW}Skip creating v2 tables${NC}..."
+fi
 echo "Done ($SECONDS)"
 
 SECONDS=0
-if [ ${DB_NAME} = "blpcore" ]
-then
-  cat -v ./output/blpcore/tables/program.sql | sed "s/'\^@'/0/g" > ./output/blpcore/tables/program.sql.new
-  mv ./output/blpcore/tables/program.sql.new ./output/blpcore/tables/program.sql
-  cat -v ./output/blpcore/tables/program.sql | sed "s/'\^A'/1/g" > ./output/blpcore/tables/program.sql.new
-  mv ./output/blpcore/tables/program.sql.new ./output/blpcore/tables/program.sql
-  cat -v ./output/blpcore/tables/program_aud.sql | sed "s/'\^@'/0/g" > ./output/blpcore/tables/program_aud.sql.new
-  mv ./output/blpcore/tables/program_aud.sql.new ./output/blpcore/tables/program_aud.sql
-  cat -v ./output/blpcore/tables/program_aud.sql | sed "s/'\^A'/1/g" > ./output/blpcore/tables/program_aud.sql.new
-  mv ./output/blpcore/tables/program_aud.sql.new ./output/blpcore/tables/program_aud.sql
-fi
 SQL="./output/${DB_NAME}/psql_data.sql"
-echo -en "${YELLOW}Inserting data${NC}..."
-psql --set  ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -f ${SQL} -o ${ERRLOG} -d ${DB_NAME} || error "Inserting data"
+if [ ${SKIP_DATA} = "false" ]
+then
+  echo -en "${YELLOW}Inserting data${NC}..."
+  psql --set  ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -f ${SQL} -o ${ERRLOG} -d ${DB_NAME} || error "Inserting data"
+else
+  echo -en "${YELLOW}Skipping inserting data${NC}..."
+fi
 echo "Done ($SECONDS)"
 
 SECONDS=0
 SQL="./output/${DB_NAME}/psql_views.sql"
-echo -en "${YELLOW}Creating views${NC}..."
-psql --set ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -f ${SQL} -o ${ERRLOG} -d ${DB_NAME} || error "Creating views"
+if [ ${SKIP_VIEWS} = "false" ]
+then
+  echo -en "${YELLOW}Creating views${NC}..."
+  psql --set ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -f ${SQL} -o ${ERRLOG} -d ${DB_NAME} || error "Creating views"
+else
+  echo -en "${YELLOW}Skipping creating views${NC}..."
+fi
 echo "Done ($SECONDS)"
 
 SECONDS=0
-if [ ${DB_NAME} = "blpcore" ]
-then
-  cat -v ./output/blpcore/psql_index_fk.sql | sed 's/REFERENCES user/REFERENCES "blp_user"/g' > ./output/blpcore/psql_index_fk.sql.new
-  mv ./output/blpcore/psql_index_fk.sql.new ./output/blpcore/psql_index_fk.sql
-fi
 SQL="./output/${DB_NAME}/psql_index_fk.sql"
-echo -en "${YELLOW}Creating indexes and fk${NC}..."
-psql --set ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -f ${SQL} -o ${ERRLOG} -d ${DB_NAME} || error "Creating add indexes and constraints"
+if [ ${SKIP_CONSTRAINTS} = "false" ]
+then
+  echo -en "${YELLOW}Creating indexes and fk${NC}..."
+  psql --set ON_ERROR_STOP=on -h ${HOST} -U ${USER} -p ${PORT} -f ${SQL} -o ${ERRLOG} -d ${DB_NAME} || error "Creating add indexes and constraints"
+else
+  echo -en "${YELLOW}Skipping creating indexes and fk${NC}..."
+fi
 echo "Done ($SECONDS)"
 
 echo -e "${GREEN}Migration to PG was completed SUCCESSFULLY${NC}"
