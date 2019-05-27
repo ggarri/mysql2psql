@@ -32,7 +32,13 @@
             {"from": "CURRENT_TIMESTAMP", "to": "current_timestamp"},
             {"from": "b'0'", "to": "FALSE"},
             {"from": "b'1'", "to": "TRUE"}
-        ]
+        ],
+	"name": [
+            {"from": "REV", "to": "rev"},
+            {"from": "REVTYPE", "to": "revtype"},
+            {"from": "Retailer_id", "to": "retailer_id"},
+            {"from": "mediumId", "to": "medium_id"}
+	]
     },
     "table": {
         "name": [

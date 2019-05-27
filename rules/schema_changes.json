@@ -1,6 +1,10 @@
 {
     "tables": {
        "transaction": {"_WHERE_": "id > 1520431"},
-       "transaction_redeem_data": {"_WHERE_": "transaction > 1520431"}
+       "transaction_redeem_data": {"_WHERE_": "transaction > 1520431"},
+       "hibernate_sequence": {"_WHERE_": "1=2"},
+       "domain": {"_WHERE_": "1=2"},
+       "schema_version": {"_WHERE_": "1=2"}
             }
 }
+
