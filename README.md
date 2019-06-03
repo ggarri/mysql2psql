@@ -18,12 +18,12 @@ This tool provides you the chance of migrate your local MySQL databases to Postg
     $ python main.py all-databases
 (it is recommended to use `prefix` from parameters.json, read more above)
 
-### Toggle action to be executed on new database in bin/migrate.sh
-   SKIP_DB=true
-   SKIP_SCHEMA=true
-   SKIP_DATA=true
-   SKIP_VIEWS=true
-   SKIP_CONSTRAINTS=true
+### Toggle actions to be executed on new database in bin/migrate.sh
+   SKIP_DB=true                     skip database removal and creation on target
+   SKIP_SCHEMA=true                 skip schema creation on target
+   SKIP_DATA=true                   skip data import on target
+   SKIP_VIEWS=true                  skip view creation on target
+   SKIP_CONSTRAINTS=true            skip index and constraints creation on target
 
 # Documentation
 ## OS Dependences
