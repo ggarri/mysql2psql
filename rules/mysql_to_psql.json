@@ -42,7 +42,16 @@
     },
     "table": {
         "name": [
-            {"from": "user", "to": "blp_user"}
+            {"from": "user", "to": "blp_user"},
+            {"from": "product_AUD", "to": "product_aud"},
+            {"from": "product_eans_AUD", "to": "product_eans_aud"},
+            {"from": "program_AUD", "to": "program_aud"},
+            {"from": "promotion_AUD", "to": "promotion_aud"},
+            {"from": "redeem_option_AUD", "to": "redeem_option_aud"},
+            {"from": "retailer_AUD", "to": "retailer_aud"},
+            {"from": "bpo_product_ids_AUD", "to": "bpo_product_ids_aud"},
+            {"from": "translation_AUD", "to": "translation_aud"},
+            {"from": "RevisionEntity", "to": "revisionentity"}
 	],
         "engine": [
             {"from": "MyISAM", "to": "INNODB"}
