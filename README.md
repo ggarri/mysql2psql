@@ -2,8 +2,9 @@
 
 Migrate your current MySQL databases into Postgres in a single command.
 
-This tool provides you the chance of migrate your local MySQL databases to Postgres and even modify your current database structure, names and achieve a better
- consistence defining new foreign keys and cleaning up the data using `_PRE_SQL` queries.
+The original project was using a direct connection to MySQL which caused a limitation for the amount of data to be processed to be able to fit in memory. I was able to rewrite the code partially with help of https://www.manejandodatos.es/2015/04/3597/ this blog. By making use of a streaming result set I was able to make an export that can be further processed for the MySQL & PostgreSQL differences.
+
+This tool provides you the chance of migrate your local MySQL databases to Postgres and even modify your current database structure, names and achieve a better consistence defining new foreign keys and cleaning up the data using `_PRE_SQL` queries.
 
 # How to use it
  
@@ -16,6 +17,13 @@ This tool provides you the chance of migrate your local MySQL databases to Postg
 ### Mode3: Migrate your whole MySQL schema
     $ python main.py all-databases
 (it is recommended to use `prefix` from parameters.json, read more above)
+
+### Toggle actions to be executed on new database in bin/migrate.sh
+   SKIP_DB=true                     skip database removal and creation on target
+   SKIP_SCHEMA=true                 skip schema creation on target
+   SKIP_DATA=true                   skip data import on target
+   SKIP_VIEWS=true                  skip view creation on target
+   SKIP_CONSTRAINTS=true            skip index and constraints creation on target
 
 # Documentation
 ## OS Dependences
