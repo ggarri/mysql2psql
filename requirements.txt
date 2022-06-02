@@ -3,5 +3,5 @@ PyMySQL==0.7.2
 httplib2==0.18.0
 netifaces==0.10.4
 psycopg2cffi==2.7.7
-html5lib==0.9999999
+html5lib==0.99999999
 chardet==2.3.0
