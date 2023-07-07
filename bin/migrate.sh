@@ -50,8 +50,8 @@ echo -e "${YELLOW}************************${NC}"
 # echo -e "${YELLOW}Logs are being redirect to:${NC} \n\tQueries:\t${DUMPLOG}\n\tErrors:\t\t${ERRLOG}${NC}"
 
 echo -en "${YELLOW}Creating db${NC}..."
-psql --set ON_ERROR_STOP=on -U ${USER} -p ${PORT} -o ${ERRLOG} -c "DROP DATABASE IF EXISTS ${DB_NAME}" || error "Dropping old db"
-psql --set ON_ERROR_STOP=on -U ${USER} -p ${PORT} -o ${ERRLOG} -c "CREATE DATABASE ${DB_NAME}" || error "Creating db"
+psql --set ON_ERROR_STOP=on -U ${USER} -p ${PORT} -o ${ERRLOG} -c "DROP DATABASE IF EXISTS \"${DB_NAME}\"" || error "Dropping old db"
+psql --set ON_ERROR_STOP=on -U ${USER} -p ${PORT} -o ${ERRLOG} -c "CREATE DATABASE \"${DB_NAME}\"" || error "Creating db"
 echo "Done ($SECONDS)"
 
 SECONDS=0

@@ -3,7 +3,7 @@ __author__ = 'ggarrido'
 import datetime
 import re
 
-validTimeRE = re.compile(ur'\d\d:\d\d')
+validTimeRE = re.compile(u'\d\d:\d\d')
 
 def convertStrBoolean(value, col_attrs=None):
     if not value or not (isinstance(value, str) or isinstance(value, int)):

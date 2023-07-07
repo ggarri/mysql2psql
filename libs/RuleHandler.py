@@ -32,7 +32,7 @@ class RuleHandler:
         if self.rules is None or 'tables' not in self.rules:
             return
 
-        for table_name, table_attrs in self.rules['tables'].iteritems():
+        for table_name, table_attrs in self.rules['tables'].items():
             # If table doesn't WITH TIME ZONE on the schema, skip iter
             if 'tables' not in schema or table_name not in schema['tables']:
                 continue
@@ -73,11 +73,11 @@ class RuleHandler:
                     schema[col_name]['size'] = None
 
     def _apply_node_rules(self, schema):
-        for table_name, table_attrs in schema['tables'].iteritems():
+        for table_name, table_attrs in schema['tables'].items():
             self._apply_table_node_rule(schema['tables'][table_name], table_attrs)
 
     def _apply_table_node_rule(self, schema, table_attrs):
-        for table_attr_key, table_attr_value in table_attrs.iteritems():
+        for table_attr_key, table_attr_value in table_attrs.items():
             # In case it is a table attr and there is rules for them
             if table_attr_key != 'columns' and table_attr_key in self.node_rules.get('table', {}):
                 for node_attr_fromto in self.node_rules['table'][table_attr_key]:
@@ -86,11 +86,11 @@ class RuleHandler:
             # In case of columns
             elif table_attr_key == 'columns':
                 # Replace in case from value matches current column attr value
-                for col_name, col_attrs in table_attr_value.iteritems():
+                for col_name, col_attrs in table_attr_value.items():
                     self._apply_col_node_rule(schema['columns'][col_name], col_attrs)
 
     def _apply_col_node_rule(self, schema, col_attrs):
-        for col_attr_key, col_attr_value in col_attrs.iteritems():
+        for col_attr_key, col_attr_value in col_attrs.items():
             if col_attr_key not in self.node_rules.get('column', {}):
                 continue
             for node_attr_fromto in self.node_rules['column'][col_attr_key]:
@@ -105,10 +105,10 @@ class RuleHandler:
     @staticmethod
     def get_skip_colums(schema_changes):
         skipped_cols = []
-        for table_name, table_attrs in schema_changes['tables'].iteritems():
+        for table_name, table_attrs in schema_changes['tables'].tems():
             if 'columns' not in table_attrs:
                 continue
-            for col_name, col_attrs in table_attrs['columns'].iteritems():
+            for col_name, col_attrs in table_attrs['columns'].items():
                 if RuleHandler.STR_SKIP == col_attrs:
                     skipped_cols.append((table_attrs.get('name', table_name), col_name))
         return skipped_cols

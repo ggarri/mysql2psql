@@ -1,7 +1,7 @@
-BeautifulSoup==3.2.1
-PyMySQL==0.7.2
+beautifulsoup4==4.0.1
+PyMySQL==1.1.0
 httplib2==0.18.0
-netifaces==0.10.4
-psycopg2cffi==2.7.7
+netifaces==0.11.0
+psycopg2cffi==2.9.0
 html5lib==0.9999999
 chardet==2.3.0

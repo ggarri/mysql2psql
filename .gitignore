@@ -4,3 +4,4 @@ vendor/*
 config/parameters.json
 logs/*
 *.pyc
+.vscode/*

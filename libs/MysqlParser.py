@@ -97,8 +97,9 @@ class MysqlParser():
         for pre_sql in table_attrs['_PRE_SQL_']:
             try:
                 res = self.cursor.execute(pre_sql)
-                if res is not None and res != 0: print "%s (Affected rows %d)" % (pre_sql, res)
-            except Exception, e: print RED + ("ERROR: %s\n MSG: %s" % (pre_sql, str(e))) + NC
+                if res is not None and res != 0: print("%s (Affected rows %d)" % (pre_sql, res))
+            except Exception as e: 
+                print(RED + ("ERROR: %s\n MSG: %s" % (pre_sql, str(e))) + NC)
 
 
     def get_table_raw_data(self, db_name, table, cols, table_attrs, schema_changes):
@@ -185,7 +186,7 @@ class MysqlParser():
         SELECT
          C.column_name, C.is_nullable, C.data_type, C.column_default, C.column_type,
          C.character_maximum_length as size, C.column_key as isPk, C.extra,
-         CONCAT(K.referenced_table_name, '(',  referenced_column_name, ')') as reference,
+         CONCAT('"', K.referenced_table_name, '"("',  referenced_column_name, '")') as reference,
          CONCAT_WS(',', C.numeric_precision, C.numeric_scale) as dsize
         FROM
          %s.columns C
