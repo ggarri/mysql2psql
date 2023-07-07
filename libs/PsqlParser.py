@@ -5,8 +5,8 @@ import re
 import json
 import time
 import copy
-from RuleHandler import RuleHandler
-from MysqlParser import MysqlParser
+from libs.RuleHandler import RuleHandler
+from libs.MysqlParser import MysqlParser
 import dumperAuxFuncs
 from decimal import Decimal
 
@@ -61,7 +61,7 @@ class PsqlParser():
         psql_tables.write("SET SCHEMA '%s';\n" % schema_name)
         psql_tables.write("CREATE EXTENSION \"unaccent\";\n\n")
 
-        for table_name, table_attr in schema['tables'].iteritems():
+        for table_name, table_attr in schema['tables'].items():
             psql_tables.write("\n-- CREATE TABLE %s \n %s \n %s \n" % (
                 table_attr['name'], self._get_sql_drop_table(table_attr),
                 self._get_sql_create_table(table_attr)
@@ -113,19 +113,19 @@ class PsqlParser():
                            for table_name in schema_changes['tables'].keys() \
                            if '_PRE_SQL_' in schema_changes['tables'][table_name] and table_name in pg_schema['tables']}
 
-        for table_name, table_attrs in pre_sql_tables.iteritems():
+        for table_name, table_attrs in pre_sql_tables.items():
             mysql_parser.run_pre_sql(db_name, table_name, table_attrs, schema_changes)
 
-        for table_name, table_attrs in pg_schema['tables'].iteritems():
-            print "Parsing table '%s' data...." % table_name
+        for table_name, table_attrs in pg_schema['tables'].items():
+            print("Parsing table '%s' data...." % table_name)
             table_name_to = table_attrs if not table_attrs.get('name', {}) else table_attrs['name']
             table_filename = os.path.join(tables_path, "%s.sql" % (table_name_to))
             table_dump = open(table_filename, 'w+')
 
-            cols_from = [col_name for col_name, col_attr in table_attrs['columns'].iteritems()
+            cols_from = [col_name for col_name, col_attr in table_attrs['columns'].items()
                  if not col_attr.get('_SKIP_', False)]
             cols_to = [col_name if not col_attr.get('name', {}) else col_attr['name']
-                       for col_name, col_attr in table_attrs['columns'].iteritems()
+            for col_name, col_attr in table_attrs['columns'].items()
                  if not col_attr.get('_SKIP_', False)]
 
             start_time = time.time()
@@ -151,7 +151,7 @@ class PsqlParser():
         output.write("SET SCHEMA 'public';\n")
 
         output.write("\n\n")
-        for table_name, table_attr in schema['tables'].iteritems():
+        for table_name, table_attr in schema['tables'].items():
             output.write(self._get_sql_sequence(table_attr))
             output.write(self._get_sql_fkeys(table_attr))
             output.write(self._get_sql_indexes(table_attr))
@@ -199,7 +199,7 @@ class PsqlParser():
 
     def _get_table_raw_dump_rules(self, table_name, cols, attrs):
         tuple_to_check = []
-        for rule_attr, rule_conds in self.raw_dump_rules.get('column', {}).iteritems():
+        for rule_attr, rule_conds in self.raw_dump_rules.get('column', {}).items():
             for rule_cond in rule_conds:
                 tuple_to_check += [(col_key, attrs[col_name], rule_cond['method']) \
                     for col_key, col_name in enumerate(cols) \
@@ -229,8 +229,8 @@ class PsqlParser():
                 replace("0000-00-00 00:00:00", "2000-01-01 00:00:00").\
                 replace("0000-00-00", "2000-01-01")
         except:
-            print "Can't decode value"
-            print line
+            print("Can't decode value")
+            print(line)
             return None
 
         # Grag table name from insert query and check if there is a new name for it
@@ -352,7 +352,7 @@ class PsqlParser():
         template = 'SELECT setval(\'%s_%s_seq\', %d, false);\n'
         return "\n".join([template % (
                     table_attr['name'], col_attrs['name'], table_attr['autoIncrement']
-                ) for col_name, col_attrs in table_attr['columns'].iteritems() if col_attrs['isPk'] and table_attr['autoIncrement'] ])
+                ) for col_name, col_attrs in table_attr['columns'].items() if col_attrs['isPk'] and table_attr['autoIncrement'] ])
 
     @staticmethod
     def _get_dump_initial_statements():
@@ -393,10 +393,10 @@ class PsqlParser():
         # index_template = 'CREATE INDEX %s_%s_idx ON %s (%s);'
         fkeys = ''
 
-        for col_name, col_attrs in table_attr['columns'].iteritems():
+        for col_name, col_attrs in table_attr['columns'].items():
             if col_attrs['reference']:
                 fkeys += '\n' + fkey_template % \
-                (table_attr['name'], table_attr['name'], col_attrs['name'], col_attrs['name'],
+                (table_attr['name'], table_attr['name'], col_attrs['name'], '"' + col_attrs['name'] + '"',
                  col_attrs['reference'], col_attrs['on_delete'] if 'on_delete' in col_attrs else default_on_def)
                 # fkeys += '\n' + index_template % (table_attr['name'], col_attrs['name'], table_attr['name'], col_attrs['name'])
 
@@ -411,11 +411,11 @@ class PsqlParser():
         index_template = 'CREATE INDEX %s_%s_x ON %s ("%s");\n'
         indexes = '\n';
 
-        for index_name, index_attrs in table_attr['indexes'].iteritems():
+        for index_name, index_attrs in table_attr['indexes'].items():
             columns = list()
             for index_column_name in index_attrs['columns']:
                 columns.append(table_attr['columns'][index_column_name]['name'])
-            indexes += index_template % (table_attr['name'], index_attrs['name'], table_attr['name'], '" ,"'.join(columns))
+            indexes += index_template % (table_attr['name'], index_attrs['name'], 'public."' + table_attr['name'] + '"', '" ,"'.join(columns))
 
         return indexes
 
@@ -429,7 +429,7 @@ class PsqlParser():
         columns_pri, columns_ref, columns, columns_ignore = \
             PsqlParser._get_categorized_columns(table_attr['columns'])
         v2_columns = []
-        for columnName, columnAttr in merge_dicts(columns_pri, columns_ref, columns).iteritems():
+        for columnName, columnAttr in merge_dicts(columns_pri, columns_ref, columns).items():
             v2_columns.append(PsqlParser._get_sql_column(columnAttr))
         return template % (table_attr['name'], ", \n ".join(v2_columns))
 
@@ -445,7 +445,7 @@ class PsqlParser():
         columns_ignore = {}
         first_pk_col = None
 
-        for col_name, col_attrs in tableColumns.iteritems():
+        for col_name, col_attrs in tableColumns.items():
             if RuleHandler.STR_SKIP in col_attrs:
                 columns_ignore[col_name] = col_attrs
             elif col_attrs['isPk']:
